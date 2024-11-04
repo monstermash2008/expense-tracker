@@ -11,7 +11,6 @@ const expenseSchema = z.object({
 
 type Expense = z.infer<typeof expenseSchema>
 
-
 const fakeExpenses: Expense[] = [
     { id: 1, title: "Groceries", amount: 50 },
     { id: 2, title: "Utilities", amount: 100 },
@@ -29,6 +28,10 @@ export const expensesRoute = new Hono()
         const expense = createPostSchema.parse(data)
         fakeExpenses.push({ ...expense, id: fakeExpenses.length })
         return c.json(expense)
+    })
+    .get("/total-spent", (c) => {
+        const total = fakeExpenses.reduce((acc, expense) => acc + expense.amount, 0)
+        return c.json({ total })
     })
     .get("/:id{[0-9]+}", (c) => {
         const id = Number.parseInt(c.req.param("id"));
