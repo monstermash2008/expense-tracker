@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -7,31 +7,31 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { api } from "@/lib/api";
-import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+} from '@/components/ui/table'
+import { api } from '@/lib/api'
+import { useQuery } from '@tanstack/react-query'
+import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute("/expenses")({
+export const Route = createFileRoute('/_authenticated/expenses')({
   component: Expenses,
-});
+})
 
 async function getAllExpenses() {
-  const result = await api.expenses.$get();
+  const result = await api.expenses.$get()
   if (!result.ok) {
-    throw new Error("server error");
+    throw new Error('server error')
   }
-  const data = await result.json();
-  return data;
+  const data = await result.json()
+  return data
 }
 
 function Expenses() {
   const { data, isPending, error } = useQuery({
-    queryKey: ["get-all-expenses"],
+    queryKey: ['get-all-expenses'],
     queryFn: getAllExpenses,
-  });
+  })
 
-  if (error) return "An error has occured: " + error.message;
+  if (error) return 'An error has occured: ' + error.message
 
   return (
     <div className="p-2 max-w-3xl m-auto">
@@ -71,5 +71,5 @@ function Expenses() {
         </TableBody>
       </Table>
     </div>
-  );
+  )
 }
