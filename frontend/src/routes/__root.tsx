@@ -7,7 +7,7 @@ export const Route = createRootRoute({
 
 function NavBar() {
   return (
-    <div className="p-2 flex gap-2">
+    <div className="p-2 flex max-w-2xl m-auto justify-between items-baseline">
       <Link to="/" className="[&.active]:font-bold">
         Home
       </Link>{" "}
@@ -18,7 +18,7 @@ function NavBar() {
         Expenses
       </Link>
       <Link to="/create-expense" className="[&.active]:font-bold">
-        Create Expense
+        Create
       </Link>
     </div>
   );
