@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "@tanstack/react-form";
 import { api } from "@/lib/api";
 import { createExpenseSchema } from "../../../../shared/types";
+import { Calendar } from "@/components/ui/calendar";
 
 export const Route = createFileRoute("/_authenticated/create-expense")({
   component: CreateExpense,
@@ -17,6 +18,7 @@ function CreateExpense() {
     defaultValues: {
       title: "",
       amount: "0",
+      date: new Date().toISOString(),
     },
     validators: {
       onChange: createExpenseSchema,
@@ -73,6 +75,26 @@ function CreateExpense() {
                 onBlur={field.handleBlur}
                 type="number"
                 onChange={(e) => field.handleChange(e.target.value)}
+              />
+              {field.state.meta.isTouched && field.state.meta.errors.length ? (
+                <em>{field.state.meta.errors.join(", ")}</em>
+              ) : null}
+              {field.state.meta.isValidating ? "Validating..." : null}
+            </div>
+          )}
+        />
+
+        <form.Field
+          name="date"
+          children={(field) => (
+            <div className="self-center">
+              <Calendar
+                mode="single"
+                selected={new Date(field.state.value)}
+                onSelect={(date) =>
+                  field.handleChange((date ?? new Date()).toISOString())
+                }
+                className="rounded-md border"
               />
               {field.state.meta.isTouched && field.state.meta.errors.length ? (
                 <em>{field.state.meta.errors.join(", ")}</em>
