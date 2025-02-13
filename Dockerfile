@@ -1,7 +1,7 @@
 # syntax = docker/dockerfile:1
 
 # Adjust BUN_VERSION as desired
-ARG BUN_VERSION=1.1.34
+ARG BUN_VERSION=1.2.2
 FROM oven/bun:${BUN_VERSION}-slim as base
 
 LABEL fly_launch_runtime="Bun"
@@ -24,7 +24,7 @@ COPY bun.lock package.json ./
 RUN bun install --ci
 
 # Install frontend node modules
-COPY --link frontend/bun.lockb frontend/package.json ./frontend/
+COPY --link frontend/bun.lock frontend/package.json ./frontend/
 RUN cd frontend && bun install --ci
 
 # Copy application code
