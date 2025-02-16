@@ -5,3 +5,5 @@ export const createExpenseSchema = insertExpensesSchema.omit({
     createdAt: true,
     id: true
 })
+
+export type CreateExpense = Zod.infer<typeof createExpenseSchema>
