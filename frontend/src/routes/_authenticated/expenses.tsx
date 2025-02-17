@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -9,11 +10,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  deleteExpense,
   getAllExpensesQueryOptions,
   loadingCreateExpenseQueryOptions,
 } from "@/lib/api";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { Trash } from "lucide-react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/expenses")({
   component: Expenses,
@@ -72,6 +76,9 @@ function Expenses() {
                     <TableCell>
                       <Skeleton className="h-4" />
                     </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4" />
+                    </TableCell>
                   </TableRow>
                 ))
             : data?.expenses.map((expense) => (
@@ -80,10 +87,53 @@ function Expenses() {
                   <TableCell>{expense.title}</TableCell>
                   <TableCell>{expense.amount}</TableCell>
                   <TableCell>{expense.date.split("T")}</TableCell>
+                  <TableCell>
+                    <ExpenseDeleteButton id={expense.id} />
+                  </TableCell>
                 </TableRow>
               ))}
         </TableBody>
       </Table>
     </div>
+  );
+}
+
+function ExpenseDeleteButton({ id }: { id: number }) {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: deleteExpense,
+    onError: () => {
+      toast("Error", {
+        description: `Failed to delete expense: ${id}`,
+      });
+    },
+    onSuccess: () => {
+      toast("Expense deleted", {
+        description: `Successfully deleted expense: ${id}`,
+      });
+
+      queryClient.setQueryData(
+        getAllExpensesQueryOptions.queryKey,
+        (existingExpenses) => {
+          return {
+            ...existingExpenses,
+            expenses: existingExpenses!.expenses.filter(
+              (expense) => expense.id !== id
+            ),
+          };
+        }
+      );
+    },
+  });
+  return (
+    <Button
+      disabled={mutation.isPending}
+      onClick={() => mutation.mutate({ id })}
+      variant="outline"
+      size="icon"
+    >
+      {mutation.isPending ? "..." : <Trash className="h-4 w-4" />}
+    </Button>
   );
 }
